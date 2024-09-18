@@ -6,7 +6,15 @@ GET http://localhost:5248
 
 GET http://localhost:5248/produto/listar
 
-### Cadastrar Produtos
+### Cadastrar Produto
 
-POST http://localhost:5248/produto/cadastrar/agua
+POST http://localhost:5248/produto/cadastrar
+Content-Type: application/json
 
+{
+    "nome" : "Bolacha",
+    "preco": 4.5,
+    "quantidade" : 156
+}
+
+### Remover Produto

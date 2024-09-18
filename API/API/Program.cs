@@ -5,11 +5,10 @@
 
 //MINIMAL APIs - C# 
 using API.Models;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
-
-
 
 List<Produto> produtos = new List<Produto>();
 
@@ -44,37 +43,42 @@ produtos.Add(new Produto()
 
 app.MapGet("/", () => "API de produtos");
 
-//GET: //produto/listar
+//GET: /produto/listar
 app.MapGet("/produto/listar", () => 
 {
-    return Results.Ok(produtos);
+    if(produtos.Count > 0)
+    {
+        return Results.Ok(produtos);
+    }
+
+    return Results.NotFound();
+    
+});
+
+app.MapGet("/produto/buscar/{nome}", (string nome) => {
+
+    foreach(Produto produtoCadastrado in produtos)
+    {
+        if(produtoCadastrado.Nome == nome)
+        {
+            return Results.Ok(produtoCadastrado);
+        }
+    }
+    return Results.NotFound();
+
 });
 
 //GET: //produto/listar
-app.MapPost("/produto/cadastrar/{nome}", (string nome) => 
+app.MapPost("/produto/cadastrar", ([FromBody] Produto produto) => 
 {
-
-    //Criar o objeto e preencher
-    Produto produto = new Produto();
-    produto.Nome = nome;
     //Adicionando dentro da lista
     produtos.Add(produto);
-    return Results.Ok(produtos);
+    return Results.Created("", produto);
 });
 
-//Criar uma funcionalidade para receber informações
-// - Receber informações pela URL da requisição
-// - Receber informações pelo corpo da requisição
+app.MapDelete("/produto/remover", ([FromBody] Produto produto) => 
+{
+
+});
 
 app.Run();
-
-// C# - Utilização dos gets e sets
-/*Produto produto = new Produto();
-produto.Preco = 5;
-produto.
-Console.WriteLine("Preço: " + produto.Preco);
-
-// JAVA - Utilização dos gets e sets
-/*Produto produto = new Produto();
-produto.setPreco(5);
-Console.WriteLine("Preço: " + produto.getPreco());*/
